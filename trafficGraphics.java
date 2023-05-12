@@ -32,7 +32,7 @@ public class trafficGraphics extends JPanel
       for(int i = 0; i < board.length; i++){
          for(int k = 0; k < board[i].length; k++){
             switch(board[i][k].getType()){
-               case "road":
+               case 0: //road
                   g.setColor(Color.gray);
                   g.fillRect(i * 7, k * 7, 7, 7);
                   g.setColor(Color.yellow);
@@ -41,14 +41,31 @@ public class trafficGraphics extends JPanel
                   else
                      g.drawLine(i * 7, k * 7 + 3, i * 7 + 7, k * 7 + 3);
                   break;
-               case "intersection":
-                  if(board[i][k].getPass()) //check if light is green or red
+               case 1: //intersection
+                  g.setColor(Color.black);
+                  g.fillRect(i * 7, k * 7, 7, 7);
+                  if(board[i][k].getPass(0)) //north
                      g.setColor(Color.green);
                   else
                      g.setColor(Color.red);
-                  g.fillRect(i * 7, k * 7, 7, 7);
+                  g.fillOval(i * 7 + 4, k * 7, 2, 2); //north 
+                  if(board[i][k].getPass(1)) //east
+                     g.setColor(Color.green);
+                  else
+                     g.setColor(Color.red);
+                  g.fillOval(i * 7 + 4, k * 7 + 3, 2, 2); //east
+                  if(board[i][k].getPass(2)) //south
+                     g.setColor(Color.green);
+                  else
+                     g.setColor(Color.red);
+                  g.fillOval(i * 7, k * 7 + 4, 2, 2); //south
+                  if(board[i][k].getPass(3)) //west
+                     g.setColor(Color.green);
+                  else
+                     g.setColor(Color.red);
+                  g.fillOval(i * 7, k * 7, 2, 2); //west
                   break;
-               case "grass":
+               case 2: //grass
                   g.setColor(Color.green);
                   g.fillRect(i * 7, k * 7, 7, 7);
                   break;

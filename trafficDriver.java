@@ -6,7 +6,10 @@ import java.util.*;
 
 public class trafficDriver					   
 {
-   public static trafficGraphics screen;					            //Our Custom JPanel
+   public static trafficGraphics screen;	
+   private static int ROAD = 0;
+   private static int INTERSECTION = 1;
+   private static int GRASS = 2;
    public static boardTile[][] board;
    static int SIZE = 700;
    public static List<Car> carList;
@@ -25,21 +28,29 @@ public class trafficDriver
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.setContentPane(screen);		
       frame.setVisible(true);
+      int numWaiting;
+      int numStationary;
+      for(int i = 0; i < 100; i++){
+         generateCar();
+      }
       while(true){
+         numWaiting = 0;
          screen.updateBoard(board);
          frame.repaint();
-         // for(Car x : carList){
-//             x.move();
-//          }
+         numStationary = 0;
          for(int i = 0; i < carList.size(); i++){
-            carList.get(i).move();
+            if(carList.get(i).turnRight())
+               continue;
+            else if(!carList.get(i).move())
+               numStationary++;
          }
          for(boardTile x : intersectionList){
-            if(Math.random() < 0.2)
-               x.flip();
+            x.calculate();
+            numWaiting += x.hasLine();
          }
-         Thread.sleep(10);
-         generateCar();
+         Thread.sleep(100);
+         // generateCar();
+         frame.setTitle("Number of intersections with a line: " + numWaiting + ". Number of cars that are stationary: " + numStationary + ". Number of cars: " + carList.size());
       }
    } 
    
@@ -47,8 +58,8 @@ public class trafficDriver
    public static boardTile[][] initializeBoard(boardTile[][] board){
       for(int i = 0; i < board.length; i++){
          for(int k = 0; k < board[i].length; k++){
-            board[i][k] = (i % 4 == 0 || k % 4 == 0) ? ((i % 4 == 0 && k % 4 == 0) ? new boardTile("intersection", i, k) : new boardTile("road", i, k)) : new boardTile("grass", i , k);
-            if(board[i][k].getType().equals("intersection"))
+            board[i][k] = (i % 4 == 0 || k % 4 == 0) ? ((i % 8 == 0 && k % 8 == 0 || (k % 4 == 0 && k % 8 != 0 && i % 4 == 0 && i % 8 != 0)) ? new boardTile(INTERSECTION, i, k) : new boardTile(ROAD, i, k)) : new boardTile(GRASS, i , k);
+            if(board[i][k].getType() == INTERSECTION)
                intersectionList.add(board[i][k]);
          }
       }

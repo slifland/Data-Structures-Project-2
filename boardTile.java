@@ -3,47 +3,69 @@ import java.util.*;
 public class boardTile{
    private Car leftOccupant;
    private Car rightOccupant;
-   private String type;
+   private int type;
+   private int ROAD = 0;
+   private int INTERSECTION = 1;
+   private int GRASS = 2;
    private int row, col;
    //INTERSECTION ONLY
-   private boolean canPass;
-   private MyQueue<Car> line;
+   private boolean hasCarWaiting;
+   private boolean[] canPass; //0 = NORTH, 1 = EAST, 2 = SOUTH, 3 = WEST
+   private int counter;
    
    //constructor with random type
    public boardTile(){
       leftOccupant = null;
       rightOccupant = null;
       if(Math.random() < 0.5)
-         type = "road";
+         type = ROAD;
       else
-         type = "grass";
+         type = INTERSECTION;
    }
    //constructor with specified type
-   public boardTile(String s, int r, int c){
+   public boardTile(int s, int r, int c){
       row = r;
       col = c;
       leftOccupant = null;
       rightOccupant = null;
       type = s;
-      if(type.equals("intersection")){
-         line = new MyQueue<Car>();
-         canPass = false;
+      if(type == INTERSECTION){
+         hasCarWaiting = false;
+         counter = 0;
+         canPass = new boolean[4];
+         if(Math.random() < 0.5){
+            canPass[0] = true;
+            canPass[1] = false;
+            canPass[2] = true;
+            canPass[3] = false;
+         }
+         else{
+            canPass[0] = false;
+            canPass[1] = true;
+            canPass[2] = false;
+            canPass[3] = true;
+         }
       }
    }
    
    //get methods
-   public String getType() {return type;}
-   public boolean getPass() {return canPass;}
+   public int getType() {return type;}
+   public boolean getPass(int a) {try {return canPass[a]; } catch(NullPointerException e) { return false;}}
    public Car getLeft() {return leftOccupant;}
    public Car getRight() {return rightOccupant;}
    public int getRow() {return row;}
    public int getCol() {return col;}
+   public int hasLine(){
+      if(hasCarWaiting)
+         return 1;
+      return 0;
+   }
    
    //information methods
    public boolean isEmpty() {return leftOccupant == null && rightOccupant == null;} //returns if the space is empty
    public boolean rightIsEmpty() {return rightOccupant == null;}
    public boolean leftIsEmpty() {return leftOccupant == null;}
-   public boolean isRoad() {return type.equals("road");} //checks if tile is a road
+   public boolean isRoad() {return type == ROAD;} //checks if tile is a road
 
    //maintenance and set methods
    public void clear(){  //clears the tile
@@ -56,14 +78,35 @@ public class boardTile{
    public void setLeft(Car c){
       this.leftOccupant = c;
    }
-   public void flip() {canPass = !canPass;} //flips intersection
-   public void enterLine (Car c){ //car joins line for intersection
-      line.add(c);
+   public void flip() { //flips intersection
+      for(int i = 0; i < 4; i++) {
+         canPass[i] = !canPass[i];
+      }
+      hasCarWaiting = false;
+    }
+   public void enterLine(){
+      hasCarWaiting = true;
    }
-   public void exitLine(){
-      Car temp = line.remove();
-      temp.move();
-      temp.exit();
+   public void calculate(){
+      if(!isEmpty()){
+         counter++;
+         return;
+      }
+      if(counter > 5 && hasCarWaiting){
+         if(Math.random() > 0.5){
+            this.flip();
+            counter = 0;
+            return;
+         }
+      }
+      else if(counter > 10){
+         if(Math.random() > 0.5){
+            this.flip();
+            counter = 0;
+            return;
+         }
+      }
+      counter++;
    }
 
 }
