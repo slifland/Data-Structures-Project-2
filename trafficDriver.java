@@ -30,6 +30,8 @@ public class trafficDriver
       frame.setVisible(true);
       int numWaiting;
       int numStationary;
+      int turns = 0;
+      int totCarsWaiting = 0;
       for(int i = 0; i < 100; i++){
          generateCar();
       }
@@ -39,7 +41,7 @@ public class trafficDriver
          frame.repaint();
          numStationary = 0;
          for(int i = 0; i < carList.size(); i++){
-            if(carList.get(i).turnRight())
+            if(Math.random() < 0.25 && carList.get(i).turnRight())
                continue;
             else if(!carList.get(i).move())
                numStationary++;
@@ -48,9 +50,14 @@ public class trafficDriver
             x.calculate();
             numWaiting += x.hasLine();
          }
-         Thread.sleep(100);
+         Thread.sleep(1);
          // generateCar();
          frame.setTitle("Number of intersections with a line: " + numWaiting + ". Number of cars that are stationary: " + numStationary + ". Number of cars: " + carList.size());
+         if(turns > 50){
+            totCarsWaiting += numStationary;
+            System.out.println("Average number of cars waiting: " + totCarsWaiting / (turns - 50));
+         }
+         turns++;
       }
    } 
    

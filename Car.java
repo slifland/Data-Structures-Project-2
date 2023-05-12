@@ -53,7 +53,7 @@ public class Car{
                trafficDriver.board[i][c+1].enterLine();
          }
          else{ //car is going west
-            if (i - 1 <= 0){
+            if (i - 1 <= 1){
                trafficDriver.board[i][c].setRight(null);
                trafficDriver.carList.remove(this);
                trafficDriver.generateCar();
@@ -87,7 +87,7 @@ public class Car{
                trafficDriver.board[i][c-1].enterLine();
          }
          else{ //car is going east
-         if (i + 1 >= trafficDriver.board.length){
+         if (i + 1 >= trafficDriver.board.length-1){
                trafficDriver.board[i][c].setLeft(null);
                trafficDriver.carList.remove(this);
                trafficDriver.generateCar();
