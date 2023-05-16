@@ -16,9 +16,9 @@ public class Car{
    }
    public Car(boardTile x){
       loc = x;
-      if(loc.getCol() == 0)
+      if(loc.getCol() == 0 && loc.getRow() != trafficDriver.board.length - 1)
          dir = SOUTH;
-      else if(loc.getRow() == 0)
+      else if(loc.getRow() == 0 && loc.getCol() != trafficDriver.board.length - 1)
          dir = EAST;
       else if(loc.getCol() == trafficDriver.board.length - 1)
          dir = NORTH;
@@ -32,6 +32,9 @@ public class Car{
    
    public void exit() {atIntersection = false;}
    public void go() {atStopSign = false;}
+   
+   //returns cars location
+   public boardTile getLoc() {return loc;}
       
    //moves the car forward one space, returns true if successful
    public boolean move(){
@@ -41,7 +44,7 @@ public class Car{
       int c = loc.getCol();
       if(loc.getRight() == this){ //car is on the right, can be going south or west
          if(dir == SOUTH){
-            if (c + 1 >= trafficDriver.board.length){
+            if (c + 1 >= trafficDriver.board.length - 1){
                trafficDriver.board[i][c].setRight(null);
                trafficDriver.carList.remove(this);
                trafficDriver.generateCar();
@@ -150,7 +153,14 @@ public class Car{
          }
          else if (dir == 0){
             trafficDriver.board[i][c].setRight(null);
+            try{
             trafficDriver.board[i][c-1].setLeft(this);
+            }
+            catch(Exception e)
+            {
+               move();
+               return true;
+            }
             loc = trafficDriver.board[i][c-1];
          }
          else{

@@ -43,6 +43,9 @@ public class trafficDriver
          frame.repaint();
          numStationary = 0;
          for(int i = 0; i < carList.size(); i++){
+            // if(turns > 10000){
+//                System.out.println(carList.get(i).getLoc().getCol());
+//             }
             if(Math.random() < 0.25 && carList.get(i).turnRight())
                continue;
             else if(!carList.get(i).move())
@@ -90,7 +93,7 @@ public class trafficDriver
          do{
             i = (int) (Math.random() * board.length);
          }
-         while(i % 4 != 0);
+         while(i % 4 != 0 && board[i][k].rightIsEmpty());
          board[i][k].setRight(new Car(board[i][k]));
       }
       else if(ran < 0.5){ //spawn on right edge
@@ -98,7 +101,7 @@ public class trafficDriver
          do{
             k = (int) (Math.random() * board.length);
          }
-         while(k % 4 != 0);
+         while(k % 4 != 0  && board[i][k].rightIsEmpty());
          board[i][k].setRight(new Car(board[i][k]));
       }
       else if(ran < 0.75){ //spawn on bottom edge
@@ -106,7 +109,7 @@ public class trafficDriver
          do{
             i = (int) (Math.random() * board.length);
          }
-         while(i % 4 != 0);
+         while(i % 4 != 0  && board[i][k].leftIsEmpty());
          board[i][k].setLeft(new Car(board[i][k]));
       }
       else{ //spawn on left edge
@@ -114,7 +117,7 @@ public class trafficDriver
          do{
             k = (int) (Math.random() * board.length);
          }
-         while(k % 4 != 0);
+         while(k % 4 != 0  && board[i][k].leftIsEmpty());
          board[i][k].setLeft(new Car(board[i][k]));
       }
    }
