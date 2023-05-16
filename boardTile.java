@@ -7,11 +7,15 @@ public class boardTile{
    private int ROAD = 0;
    private int INTERSECTION = 1;
    private int GRASS = 2;
+   private int STOP = 3;
    private int row, col;
    //INTERSECTION ONLY
    private boolean hasCarWaiting;
    private boolean[] canPass; //0 = NORTH, 1 = EAST, 2 = SOUTH, 3 = WEST
    private int counter;
+   //STOP SIGN ONLY
+   private MyQueue<Car> stopSign;
+   
    
    //constructor with random type
    public boardTile(){
@@ -46,6 +50,9 @@ public class boardTile{
             canPass[3] = true;
          }
       }
+      else if (type == STOP){
+         stopSign = new MyQueue<Car>();
+      }
    }
    
    //get methods
@@ -65,7 +72,9 @@ public class boardTile{
    public boolean isEmpty() {return leftOccupant == null && rightOccupant == null;} //returns if the space is empty
    public boolean rightIsEmpty() {return rightOccupant == null;}
    public boolean leftIsEmpty() {return leftOccupant == null;}
-   public boolean isRoad() {return type == ROAD;} //checks if tile is a road
+   public boolean isRoad() {return type == ROAD || type == STOP;} //checks if tile is a road
+   public boolean isStop() {return type == STOP;}
+   public boolean canGo() {return stopSign.size() == 0;}
 
    //maintenance and set methods
    public void clear(){  //clears the tile
@@ -78,6 +87,12 @@ public class boardTile{
    public void setLeft(Car c){
       this.leftOccupant = c;
    }
+   public void wait(Car c){
+      stopSign.add(c);
+   }
+   public Car allow(){
+      return stopSign.remove();
+   }
    public void flip() { //flips intersection
       for(int i = 0; i < 4; i++) {
          canPass[i] = !canPass[i];
@@ -88,6 +103,9 @@ public class boardTile{
       hasCarWaiting = true;
    }
    public void calculate(){
+      if(type == STOP && stopSign.size() > 1){
+         allow().move();
+      }
       if(!isEmpty()){
          counter++;
          return;

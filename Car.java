@@ -3,6 +3,7 @@ public class Car{
    private boardTile loc;
    private int dir;
    private boolean atIntersection;
+   private boolean atStopSign;
    
    private int NORTH = 0;
    private int EAST = 1;
@@ -30,9 +31,12 @@ public class Car{
    }
    
    public void exit() {atIntersection = false;}
+   public void go() {atStopSign = false;}
       
    //moves the car forward one space, returns true if successful
    public boolean move(){
+      if(atStopSign)
+         return false;
       int i = loc.getRow();
       int c = loc.getCol();
       if(loc.getRight() == this){ //car is on the right, can be going south or west
@@ -43,7 +47,13 @@ public class Car{
                trafficDriver.generateCar();
                return true;
             }
-            else if((trafficDriver.board[i][c+1].isRoad() || trafficDriver.board[i][c+1].getPass(SOUTH)) && trafficDriver.board[i][c+1].rightIsEmpty()){
+            else if (trafficDriver.board[i][c+1].isStop()){
+               if(!trafficDriver.board[i][c+1].canGo()){
+                  atStopSign = true;
+                  trafficDriver.board[i][c+1].wait(this);
+               }
+            }
+            if((trafficDriver.board[i][c+1].isRoad() || trafficDriver.board[i][c+1].getPass(SOUTH)) && trafficDriver.board[i][c+1].rightIsEmpty()){
                trafficDriver.board[i][c].setRight(null);
                trafficDriver.board[i][c+1].setRight(this);
                loc = trafficDriver.board[i][c+1];
@@ -59,7 +69,13 @@ public class Car{
                trafficDriver.generateCar();
                return true;
             }
-            else if((trafficDriver.board[i-1][c].isRoad() || trafficDriver.board[i-1][c].getPass(WEST)) && trafficDriver.board[i-1][c].rightIsEmpty()){
+            else if (trafficDriver.board[i-1][c].isStop()){
+               if(!trafficDriver.board[i-1][c].canGo()){
+                  atStopSign = true;
+                  trafficDriver.board[i-1][c].wait(this);
+               }
+            }
+            if((trafficDriver.board[i-1][c].isRoad() || trafficDriver.board[i-1][c].getPass(WEST)) && trafficDriver.board[i-1][c].rightIsEmpty()){
                trafficDriver.board[i][c].setRight(null);
                trafficDriver.board[i-1][c].setRight(this);
                loc = trafficDriver.board[i-1][c];
@@ -77,7 +93,13 @@ public class Car{
                trafficDriver.generateCar();
                return true;
             }
-            else if((trafficDriver.board[i][c-1].isRoad() || trafficDriver.board[i][c-1].getPass(NORTH)) && trafficDriver.board[i][c-1].leftIsEmpty()){
+            else if (trafficDriver.board[i][c-1].isStop()){
+               if(!trafficDriver.board[i][c-1].canGo()){
+                  atStopSign = true;
+                  trafficDriver.board[i][c-1].wait(this);
+               }
+            }
+            if((trafficDriver.board[i][c-1].isRoad() || trafficDriver.board[i][c-1].getPass(NORTH)) && trafficDriver.board[i][c-1].leftIsEmpty()){
                trafficDriver.board[i][c].setLeft(null);
                trafficDriver.board[i][c-1].setLeft(this);
                loc = trafficDriver.board[i][c-1];
@@ -93,7 +115,13 @@ public class Car{
                trafficDriver.generateCar();
                return true;
          }
-         else if((trafficDriver.board[i+1][c].isRoad() || trafficDriver.board[i+1][c].getPass(EAST)) && trafficDriver.board[i+1][c].leftIsEmpty()){
+         else if (trafficDriver.board[i+1][c].isStop()){
+               if(!trafficDriver.board[i+1][c].canGo()){
+                  atStopSign = true;
+                  trafficDriver.board[i+1][c].wait(this);
+               }
+            }
+         if((trafficDriver.board[i+1][c].isRoad() || trafficDriver.board[i+1][c].getPass(EAST)) && trafficDriver.board[i+1][c].leftIsEmpty()){
                trafficDriver.board[i][c].setLeft(null);
                trafficDriver.board[i+1][c].setLeft(this);
                loc = trafficDriver.board[i+1][c];

@@ -10,8 +10,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Shape;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
    
-public class trafficGraphics extends JPanel
+public class trafficGraphics  extends JPanel implements MouseListener, MouseMotionListener
 {
    private static final int SIZE = 700;            //size of square screen to be drawn
    private static boardTile[][] board;
@@ -19,16 +24,31 @@ public class trafficGraphics extends JPanel
    private static final int DELAY = 1;	            //#miliseconds delay between each time the screen refreshes for the timer
    private static Timer t;							      //used to control what happens each frame (game code)
    private static HashSet<Integer> pressedKeys;    //collection of which keys are pressed down on the keyboard
-   private static int playerX, playerY;            //position of a dot that can be moved around
+   private static int playerX, playerY;             //position of a dot that can be moved around
+   private Button [] buttons = new Button[2]; 
+   private int mouseX;
+   private int mouseY;
+
     
-   public trafficGraphics(boardTile[][] board)
-   {
+   public trafficGraphics(boardTile[][] board){
       this.board = board;
+      Shape b1 = new Rectangle(750, 100, 75, 50);
+      buttons[0] = new Button(b1, "Speed Up", Color.black, Color.red, Color.white);
+      Shape b2 = new Rectangle(750, 300, 75, 50);
+      buttons[1] = new Button(b2, "Slow Down", Color.black, Color.red, Color.white);
+      addMouseListener( this );
+      addMouseMotionListener( this );
+      mouseX = SIZE/2;                       
+      mouseY = SIZE/2;
    }
 
    //displays board
    public void showGraphics(Graphics g)	
    {
+      for(Button b:buttons)
+         {
+            b.drawButton(g);
+         }
       for(int i = 0; i < board.length; i++){
          for(int k = 0; k < board[i].length; k++){
             switch(board[i][k].getType()){
@@ -69,6 +89,10 @@ public class trafficGraphics extends JPanel
                   g.setColor(Color.green);
                   g.fillRect(i * 7, k * 7, 7, 7);
                   break;
+               case 3: //stop sign
+                  g.setColor(Color.gray);
+                  g.fillRect(i * 7, k * 7, 7, 7);
+                  break;
             }
           if(!board[i][k].isEmpty()){
             g.setColor(Color.black);
@@ -89,6 +113,62 @@ public class trafficGraphics extends JPanel
       }
    }
    
+   public void mouseClicked( MouseEvent e )
+   {
+      int button = e.getButton();
+      if(button == MouseEvent.BUTTON1)
+      {
+         //***BUTTON CODE***actions if clicked on button
+         for(Button b:buttons)
+         {
+            if(b.getShape().contains(mouseX, mouseY))
+            {
+               if(b.getTitle().equals("Speed Up"))
+                  trafficDriver.speedUp();
+               else if(b.getTitle().equals("Slow Down"))
+                  trafficDriver.slowDown();
+            }
+         }   
+      //*****************/
+      } 
+      else if(button == MouseEvent.BUTTON3)
+      {
+         
+      }
+      repaint();
+   }
+
+   public void mousePressed( MouseEvent e )
+   {}
+
+   public void mouseReleased( MouseEvent e )
+   {}
+
+   public void mouseEntered( MouseEvent e )
+   {}
+
+   public void mouseMoved( MouseEvent e)
+   {
+      mouseX = e.getX();
+      mouseY = e.getY(); 
+      //***BUTTON CODE***highlight button if mouse is on it
+      for(Button b:buttons)
+      {
+         if(b.getShape().contains(mouseX, mouseY))
+            b.highlight();
+         else
+            b.unHighlight();
+      }   
+      //*****************/
+      repaint();			//refresh the screen
+   }
+
+   public void mouseDragged( MouseEvent e)
+   {}
+
+   public void mouseExited( MouseEvent e )
+   {}
+
    public void updateBoard(boardTile[][] board){ this.board = board; } //updates the board to the new state
    
    //pre:   kc is a valid keyCode: https://docs.oracle.com/javase/7/docs/api/java/awt/event/KeyEvent.html

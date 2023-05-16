@@ -10,6 +10,8 @@ public class trafficDriver
    private static int ROAD = 0;
    private static int INTERSECTION = 1;
    private static int GRASS = 2;
+   private static int STOP = 3;
+   private static int SPEED = 100;
    public static boardTile[][] board;
    static int SIZE = 700;
    public static List<Car> carList;
@@ -23,10 +25,10 @@ public class trafficDriver
       initializeBoard(board);
       screen = new trafficGraphics(board);
       JFrame frame = new JFrame("Panel with Keyboard Input");	//window title
-      frame.setSize(SIZE + 100, SIZE + 100);			                        //Size of game window
+      frame.setSize(SIZE + 200, SIZE + 100);			                        //Size of game window
       frame.setLocation(1, 1);				                     //location of game window on the screen
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      frame.setContentPane(screen);		
+      frame.setContentPane(screen);	
       frame.setVisible(true);
       int numWaiting;
       int numStationary;
@@ -50,9 +52,9 @@ public class trafficDriver
             x.calculate();
             numWaiting += x.hasLine();
          }
-         Thread.sleep(1);
+         Thread.sleep(SPEED); //number of milliseconds between turns, 1 for essentially zero delay and 1000 for 1 second delay
          // generateCar();
-         frame.setTitle("Number of intersections with a line: " + numWaiting + ". Number of cars that are stationary: " + numStationary + ". Number of cars: " + carList.size());
+         frame.setTitle("Number of intersections with a line: " + numWaiting + ". Number of cars that are stationary: " + numStationary + ". Number of cars: " + carList.size() + ". Speed: " + SPEED);
          if(turns > 50){
             totCarsWaiting += numStationary;
             System.out.println("Average number of cars waiting: " + totCarsWaiting / (turns - 50));
@@ -65,14 +67,21 @@ public class trafficDriver
    public static boardTile[][] initializeBoard(boardTile[][] board){
       for(int i = 0; i < board.length; i++){
          for(int k = 0; k < board[i].length; k++){
-            board[i][k] = (i % 4 == 0 || k % 4 == 0) ? ((i % 8 == 0 && k % 8 == 0 || (k % 4 == 0 && k % 8 != 0 && i % 4 == 0 && i % 8 != 0)) ? new boardTile(INTERSECTION, i, k) : new boardTile(ROAD, i, k)) : new boardTile(GRASS, i , k);
+            board[i][k] = (i % 4 == 0 || k % 4 == 0) ? (i % 8 == 0 && k % 8 == 0 || (k % 4 == 0 && k % 8 != 0 && i % 4 == 0 && i % 8 != 0) ? new boardTile(INTERSECTION, i, k) : (i % 4 == 0 && k % 4 == 0 ? new boardTile(STOP, i, k) : new boardTile(ROAD, i, k))) : new boardTile(GRASS, i , k);
             if(board[i][k].getType() == INTERSECTION)
                intersectionList.add(board[i][k]);
          }
       }
       return board;
    }
-   
+   public static void speedUp(){
+      SPEED -= 50;
+      if(SPEED < 0)
+         SPEED = 0;
+   }
+   public static void slowDown(){
+      SPEED += 50;
+   }
    public static void generateCar(){
       int i, k;
       double ran = Math.random();
