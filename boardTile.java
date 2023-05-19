@@ -51,7 +51,7 @@ public class boardTile{
          }
       }
       else if (type == STOP){
-         stopSign = new MyQueue<Car>();
+         //stopSign = new MyQueue<Car>();
       }
    }
    
@@ -74,7 +74,7 @@ public class boardTile{
    public boolean leftIsEmpty() {return leftOccupant == null;}
    public boolean isRoad() {return type == ROAD || type == STOP;} //checks if tile is a road
    public boolean isStop() {return type == STOP;}
-   public boolean canGo() {return stopSign.size() == 0;}
+   public boolean canGo() {return stopSign == null || stopSign.size() == 0;}
 
    //maintenance and set methods
    public void clear(){  //clears the tile
@@ -88,6 +88,8 @@ public class boardTile{
       this.leftOccupant = c;
    }
    public void wait(Car c){
+      if(stopSign == null)
+         stopSign = new MyQueue<Car>();
       stopSign.add(c);
    }
    public Car allow(){

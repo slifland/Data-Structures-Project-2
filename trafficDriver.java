@@ -38,6 +38,10 @@ public class trafficDriver
          generateCar();
       }
       while(true){
+         if(carList.size() < 75){
+            for(int i = 0; i < 25; i++)
+               generateCar();
+         }
          numWaiting = 0;
          screen.updateBoard(board);
          frame.repaint();
@@ -60,7 +64,6 @@ public class trafficDriver
          frame.setTitle("Number of intersections with a line: " + numWaiting + ". Number of cars that are stationary: " + numStationary + ". Number of cars: " + carList.size() + ". Speed: " + SPEED);
          if(turns > 50){
             totCarsWaiting += numStationary;
-            System.out.println("Average number of cars waiting: " + totCarsWaiting / (turns - 50));
          }
          turns++;
       }
@@ -87,37 +90,50 @@ public class trafficDriver
    }
    public static void generateCar(){
       int i, k;
+      int iterations = 0;
       double ran = Math.random();
       if(ran < 0.25){ //spawn on top edge
          k = 0;
          do{
             i = (int) (Math.random() * board.length);
+            iterations++;
+            if(iterations > 25)
+               return;
          }
-         while(i % 4 != 0 && board[i][k].rightIsEmpty());
+         while(i % 4 != 0 || !board[i][k].rightIsEmpty());
          board[i][k].setRight(new Car(board[i][k]));
       }
       else if(ran < 0.5){ //spawn on right edge
          i = board.length -1;
          do{
             k = (int) (Math.random() * board.length);
+            iterations++;
+            if(iterations > 25)
+               return;
          }
-         while(k % 4 != 0  && board[i][k].rightIsEmpty());
+         while(k % 4 != 0 || !board[i][k].rightIsEmpty());
          board[i][k].setRight(new Car(board[i][k]));
       }
       else if(ran < 0.75){ //spawn on bottom edge
          k = board.length -1;
          do{
             i = (int) (Math.random() * board.length);
+            iterations++;
+            if(iterations > 25)
+               return;
          }
-         while(i % 4 != 0  && board[i][k].leftIsEmpty());
+         while(i % 4 != 0 || !board[i][k].leftIsEmpty());
          board[i][k].setLeft(new Car(board[i][k]));
       }
       else{ //spawn on left edge
          i = 0;
          do{
             k = (int) (Math.random() * board.length);
+            iterations++;
+            if(iterations > 25)
+               return;
          }
-         while(k % 4 != 0  && board[i][k].leftIsEmpty());
+         while(k % 4 != 0 || !board[i][k].leftIsEmpty());
          board[i][k].setLeft(new Car(board[i][k]));
       }
    }
