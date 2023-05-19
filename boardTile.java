@@ -93,7 +93,10 @@ public class boardTile{
       stopSign.add(c);
    }
    public Car allow(){
-      return stopSign.remove();
+      Car temp = stopSign.remove();
+      if(stopSign.size() == 0)
+         stopSign = null;
+      return temp;
    }
    public void flip() { //flips intersection
       for(int i = 0; i < 4; i++) {
