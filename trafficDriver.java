@@ -39,7 +39,10 @@ public class trafficDriver
       }
       while(true){
          if(carList.size() < 75){
-            for(int i = 0; i < 25; i++)
+            int toMake = 25;
+            for(int i = 0; i < carList.size(); i++)
+               toMake += checkExistence(carList.get(i));
+            for(int i = 0; i < toMake; i++)
                generateCar();
          }
          numWaiting = 0;
@@ -50,8 +53,10 @@ public class trafficDriver
             // if(turns > 10000){
 //                System.out.println(carList.get(i).getLoc().getCol());
 //             }
-            if(Math.random() < 0.25 && carList.get(i).turnRight())
+            if(Math.random() < 0.25 && carList.get(i).turnLeft())
                continue;
+            /*if(Math.random() < 0.25 && carList.get(i).turnRight())
+               continue; */
             else if(!carList.get(i).move())
                numStationary++;
          }
@@ -136,5 +141,16 @@ public class trafficDriver
          while(k % 4 != 0 || !board[i][k].leftIsEmpty());
          board[i][k].setLeft(new Car(board[i][k]));
       }
+   }
+   
+   public static int checkExistence(Car c){
+      for(int i = 0; i < board.length; i++){
+         for(int k = 0; k < board[0].length; k++){
+            if(board[i][k].contains(c))
+               return 0;
+         }
+      }
+      carList.remove(c);
+      return 1;
    }
 }

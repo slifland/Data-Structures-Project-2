@@ -197,5 +197,56 @@ public class Car{
       }
       return false;
    }
+   
+   public boolean turnLeft(){
+      int i = loc.getRow();
+      int c = loc.getCol();
+      if(checkLeftTurnValidity(i, c)){
+         if(!move())
+            return false;
+         i = loc.getRow();
+         c = loc.getCol();
+         dir = (dir - 1 < 0) ? 3 : dir - 1;
+         if (dir == 3){
+            trafficDriver.board[i][c].setLeft(null);
+            try{
+               trafficDriver.board[i-1][c].setRight(this);
+            }
+            catch(ArrayIndexOutOfBoundsException e){
+               move();
+               return true;
+            }
+            loc = trafficDriver.board[i-1][c];
+         }
+         else if (dir == 1){
+            trafficDriver.board[i][c].setRight(null);
+            trafficDriver.board[i+1][c].setLeft(this);
+            loc = trafficDriver.board[i+1][c];
+         }
+         else
+            move();
+         return true;
+      }
+      return false;
+   }
+   
+   public boolean checkLeftTurnValidity(int i, int c){
+      try{
+         switch(dir){
+            case 0: //going north, want to go west (new dir = 3)
+               return trafficDriver.board[i][c - 1].getType() == 1 && trafficDriver.board[i][c-1].getPass(dir) && trafficDriver.board[i-1][c-1].rightIsEmpty() && trafficDriver.board[i][c-2].rightIsEmpty();
+            case 1: //going east, want to go north (new dir = 0)
+               return trafficDriver.board[i + 1][c].getType() == 1 && trafficDriver.board[i+1][c].getPass(dir) && trafficDriver.board[i+1][c-1].leftIsEmpty() && trafficDriver.board[i-2][c].rightIsEmpty();
+            case 2: //going south, want to go east (new dir = 1)
+               return trafficDriver.board[i][c + 1].getType() == 1 && trafficDriver.board[i][c+1].getPass(dir) && trafficDriver.board[i+1][c+1].leftIsEmpty() && trafficDriver.board[i][c+2].leftIsEmpty();
+            case 3: //going west, want to go south (new dir = 2)
+               return trafficDriver.board[i - 1][c].getType() == 1 && trafficDriver.board[i-1][c].getPass(dir) && trafficDriver.board[i-1][c+1].rightIsEmpty() && trafficDriver.board[i+2][c].leftIsEmpty();
+         }
+      }
+      catch(ArrayIndexOutOfBoundsException e){
+         return true;
+      }
+      return false;
+   }
 
 }

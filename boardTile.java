@@ -67,6 +67,9 @@ public class boardTile{
          return 1;
       return 0;
    }
+   public boolean contains(Car c){
+      return leftOccupant == c || rightOccupant == c;
+   }
    
    //information methods
    public boolean isEmpty() {return leftOccupant == null && rightOccupant == null;} //returns if the space is empty
