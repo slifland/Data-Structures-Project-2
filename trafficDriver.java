@@ -182,7 +182,11 @@ public class trafficDriver
       return 1;
    }
    public static void reverse(){
-      board = lastBoard;
+      for(int i = 0; i < board.length; i++){
+         for(int k = 0; k < board[0].length; k++){
+            board[i][k] = new boardTile(lastBoard[i][k]);
+         }
+      }
       carList = lastCarList;
       intersectionList = lastIntersectionList;
       go = false;
