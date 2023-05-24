@@ -54,8 +54,26 @@ public class boardTile{
          //stopSign = new MyQueue<Car>();
       }
    }
+   public boardTile(boardTile c){ //copy constructor
+      row = c.getRow();
+      col = c.getCol();
+      type = c.getType();
+      if(!c.leftIsEmpty())
+         leftOccupant = new Car(c.getLeft(), this);
+      if(!c.rightIsEmpty())
+      rightOccupant = new Car(c.getRight(), this);
+      if(type == INTERSECTION){
+         canPass = new boolean[4];
+         counter = c.getCounter();
+         for(int i = 0; i < 4; i++)
+            canPass[i] = c.getPass(i);
+         hasCarWaiting = (c.hasLine() == 1) ? true : false;
+         trafficDriver.lastIntersectionList.add(this);
+      }
+   }
    
    //get methods
+   public int getCounter() {return counter;}
    public int getType() {return type;}
    public boolean getPass(int a) {try {return canPass[a]; } catch(NullPointerException e) { return false;}}
    public Car getLeft() {return leftOccupant;}
@@ -85,9 +103,13 @@ public class boardTile{
       this.rightOccupant = null;
    }
    public void setRight(Car c){
+      if(type == GRASS)
+         return;
       this.rightOccupant = c;
    }
    public void setLeft(Car c){
+      if(type == GRASS)
+         return;
       this.leftOccupant = c;
    }
    public void wait(Car c){

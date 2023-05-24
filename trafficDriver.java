@@ -15,12 +15,22 @@ public class trafficDriver
    public static boardTile[][] board;
    static int SIZE = 700;
    public static List<Car> carList;
+   public static List<Car> lastCarList;
+   public static List<boardTile> lastIntersectionList;
    public static List<boardTile> intersectionList;
+   private static boolean inc;
+   private static boolean go;
+   private static boardTile[][] lastBoard;
    
    public static void main(String[]args) throws InterruptedException
    {
+      lastBoard = new boardTile[SIZE/7][SIZE/7];
       carList = new ArrayList<Car>();
+      go = false;
+      inc = false;
       intersectionList = new ArrayList<boardTile>();
+      lastIntersectionList = new ArrayList<boardTile>();
+      lastCarList = new ArrayList<Car>();
       board = new boardTile[SIZE/7][SIZE/7];
       initializeBoard(board);
       screen = new trafficGraphics(board);
@@ -37,40 +47,46 @@ public class trafficDriver
       for(int i = 0; i < 100; i++){
          generateCar();
       }
+      while(!go){
+         Thread.sleep(0);
+      }
       while(true){
-         if(carList.size() < 75){
-            int toMake = 25;
-            for(int i = 0; i < carList.size(); i++)
-               toMake += checkExistence(carList.get(i));
-            for(int i = 0; i < toMake; i++)
-               generateCar();
+         if(go){
+            copyBoard();
+            if(carList.size() < 75){
+               int toMake = 25;
+               for(int i = 0; i < carList.size(); i++)
+                  toMake += checkExistence(carList.get(i));
+               for(int i = 0; i < toMake; i++)
+                  generateCar();
+            }
+            numWaiting = 0;
+            screen.updateBoard(board);
+            frame.repaint();
+            numStationary = 0;
+            for(int i = 0; i < carList.size(); i++){
+               if(Math.random() < 0.25 && carList.get(i).turnLeft())
+                  continue;
+               else if(Math.random() < 0.25 && carList.get(i).turnRight())
+                  continue;
+               else if(!carList.get(i).move())
+                  numStationary++;
+            }
+            for(boardTile x : intersectionList){
+               x.calculate();
+               numWaiting += x.hasLine();
+            }
+            Thread.sleep(SPEED); //number of milliseconds between turns, 1 for essentially zero delay and 1000 for 1 second delay
+            frame.setTitle("Number of intersections with a line: " + numWaiting + ". Number of cars that are stationary: " + numStationary + ". Number of cars: " + carList.size() + ". Speed: " + SPEED);
+            if(turns > 50){
+               totCarsWaiting += numStationary;
+            }
+            turns++;
+            if(inc == true)
+               go = false;
          }
-         numWaiting = 0;
-         screen.updateBoard(board);
-         frame.repaint();
-         numStationary = 0;
-         for(int i = 0; i < carList.size(); i++){
-            // if(turns > 10000){
-//                System.out.println(carList.get(i).getLoc().getCol());
-//             }
-            if(Math.random() < 0.25 && carList.get(i).turnLeft())
-               continue;
-            /*if(Math.random() < 0.25 && carList.get(i).turnRight())
-               continue; */
-            else if(!carList.get(i).move())
-               numStationary++;
-         }
-         for(boardTile x : intersectionList){
-            x.calculate();
-            numWaiting += x.hasLine();
-         }
-         Thread.sleep(SPEED); //number of milliseconds between turns, 1 for essentially zero delay and 1000 for 1 second delay
-         // generateCar();
-         frame.setTitle("Number of intersections with a line: " + numWaiting + ". Number of cars that are stationary: " + numStationary + ". Number of cars: " + carList.size() + ". Speed: " + SPEED);
-         if(turns > 50){
-            totCarsWaiting += numStationary;
-         }
-         turns++;
+         else
+            Thread.sleep(0);
       }
    } 
    
@@ -92,6 +108,18 @@ public class trafficDriver
    }
    public static void slowDown(){
       SPEED += 50;
+   }
+   public static void increment(){
+      go = true;
+      inc = true;
+   }
+   public static void resume(){
+      go = true;
+      inc = false;
+   }
+   public static void pause(){
+      go = false;
+      inc = false;
    }
    public static void generateCar(){
       int i, k;
@@ -152,5 +180,21 @@ public class trafficDriver
       }
       carList.remove(c);
       return 1;
+   }
+   public static void reverse(){
+      board = lastBoard;
+      carList = lastCarList;
+      intersectionList = lastIntersectionList;
+      go = false;
+      inc = false;
+   }
+   public static void copyBoard(){
+      lastIntersectionList.clear();
+      lastCarList.clear();
+      for(int i = 0; i < board.length; i++){
+         for(int k = 0; k < board[0].length; k++){
+            lastBoard[i][k] = new boardTile(board[i][k]);
+         }
+      }
    }
 }

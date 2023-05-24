@@ -25,17 +25,25 @@ public class trafficGraphics  extends JPanel implements MouseListener, MouseMoti
    private static Timer t;							      //used to control what happens each frame (game code)
    private static HashSet<Integer> pressedKeys;    //collection of which keys are pressed down on the keyboard
    private static int playerX, playerY;             //position of a dot that can be moved around
-   private Button [] buttons = new Button[2]; 
+   private Button [] buttons = new Button[6]; 
    private int mouseX;
    private int mouseY;
 
     
    public trafficGraphics(boardTile[][] board){
       this.board = board;
-      Shape b1 = new Rectangle(750, 100, 75, 50);
+      Shape b1 = new Rectangle(710, 150, 75, 50);
       buttons[0] = new Button(b1, "Speed Up", Color.black, Color.red, Color.white);
-      Shape b2 = new Rectangle(750, 300, 75, 50);
+      Shape b2 = new Rectangle(785, 150, 75, 50);
       buttons[1] = new Button(b2, "Slow Down", Color.black, Color.red, Color.white);
+      Shape b3 = new Rectangle(710, 100, 75, 50);
+      buttons[2] = new Button(b3, "Start/Resume", Color.black, Color.red, Color.white);
+      Shape b4 = new Rectangle(785, 100, 75, 50);
+      buttons[3] = new Button(b4, "Pause", Color.black, Color.red, Color.white);
+      Shape b5 = new Rectangle(710, 200, 75, 50);
+      buttons[4] = new Button(b5, "Increment", Color.black, Color.red, Color.white);
+      Shape b6 = new Rectangle(785, 200, 75, 50);
+      buttons[5] = new Button(b6, "Reverse", Color.black, Color.red, Color.white);
       addMouseListener( this );
       addMouseMotionListener( this );
       mouseX = SIZE/2;                       
@@ -98,15 +106,15 @@ public class trafficGraphics  extends JPanel implements MouseListener, MouseMoti
             g.setColor(Color.black);
             if(!board[i][k].rightIsEmpty()){
                if(i % 4 == 0)
-                  g.fillOval(i * 7, k * 7, 3, 3);
+                  g.fillOval(i * 7, k * 7, 4, 4);
                else
-                  g.fillOval(i * 7, k * 7, 3, 3);
+                  g.fillOval(i * 7, k * 7, 4, 4);
             } 
             if(!board[i][k].leftIsEmpty()){
                if(i % 4 == 0)
-                  g.fillOval(i * 7 + 3, k * 7, 3, 3);
+                  g.fillOval(i * 7 + 3, k * 7, 4, 4);
                else
-                  g.fillOval(i * 7, k * 7 + 3, 3, 3);
+                  g.fillOval(i * 7, k * 7 + 3, 4, 4);
             }
           }
          }
@@ -127,6 +135,14 @@ public class trafficGraphics  extends JPanel implements MouseListener, MouseMoti
                   trafficDriver.speedUp();
                else if(b.getTitle().equals("Slow Down"))
                   trafficDriver.slowDown();
+               else if(b.getTitle().equals("Increment"))
+                  trafficDriver.increment();
+               else if(b.getTitle().equals("Pause"))
+                  trafficDriver.pause();
+               else if(b.getTitle().equals("Start/Resume"))
+                  trafficDriver.resume();
+               else if(b.getTitle().equals("Reverse"))
+                  trafficDriver.reverse();
             }
          }   
       //*****************/
