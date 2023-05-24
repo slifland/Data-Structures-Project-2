@@ -34,7 +34,11 @@ public class Car{
       dir = c.getDir();
       trafficDriver.lastCarList.add(this);
       atIntersection = c.isAtIntersection();
-   
+   }
+   public Car(boardTile x, int d, boolean y){ //for reconstructing from a code
+      loc = x;
+      dir = d;
+      atIntersection = y;
    }
    
    public void exit() {atIntersection = false;}
@@ -51,7 +55,13 @@ public class Car{
       return atIntersection;}
       
    public String carInfo(){
-      return "";
+      String code = "";
+      if(atIntersection)
+         code += "1";
+      else
+         code += "0";
+      code += Integer.toString(dir);
+      return code;
    }   
    //moves the car forward one space, returns true if successful
    public boolean move(){

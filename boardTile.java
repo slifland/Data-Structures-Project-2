@@ -72,6 +72,31 @@ public class boardTile{
       }
    }
    
+   public boardTile(String left, String right, int r, int c, int t, boolean carW, int count, boolean pass0, boolean pass1, boolean pass2, boolean pass3){ //for reconstructing an intersection from a code
+      type = t;
+      row = r;
+      col = c;
+      if(left.length() > 0)
+         leftOccupant = null; //place holder for constructing left occupant from code given
+      if(right.length() > 0)
+         rightOccupant = null; //place holder for constructing right occupant from code
+       hasCarWaiting = carW;
+       counter = count;
+       boolean[] canPass = new boolean[4];
+       canPass[0] = pass0;
+       canPass[1] = pass1;
+       canPass[2] = pass2;
+       canPass[3] = pass3;
+   }
+   public boardTile(String left, String right, int r, int c, int t){ //for reconstructing a non-intersection from code
+      row = r;
+      col = c;
+      if(left.length() > 0)
+         leftOccupant = null; //place holder for constructing left occupant from code given
+      if(right.length() > 0)
+         rightOccupant = null; //place holder for constructing right occupant from code
+      type = t;   
+   }
    //get methods
    public int getCounter() {return counter;}
    public int getType() {return type;}

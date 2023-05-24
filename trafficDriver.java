@@ -212,4 +212,22 @@ public class trafficDriver
       }
       return code;
    }
+  public static void decodify(String x){
+   lastIntersectionList.clear();
+   lastCarList.clear();
+   int r = 0; //keep track of row
+   int c = 0; //keep track of column
+   for(String y : x.split("")){
+      if(y.equals("9"))
+         break;
+      else if(y.equals("8")){
+         r++;
+         if(r > board.length){
+            r = 0;
+            c++;
+         }
+      }
+   }
+   return;
+  }
 }
