@@ -215,19 +215,56 @@ public class trafficDriver
   public static void decodify(String x){
    lastIntersectionList.clear();
    lastCarList.clear();
-   int r = 0; //keep track of row
+   int r = -1; //keep track of row (start at -1 since it increments at start of if)
    int c = 0; //keep track of column
-   for(String y : x.split("")){
+   boolean carW;
+   boolean pass0;
+   boolean pass1;
+   boolean pass2;
+   boolean pass3;
+   int type;
+   int count;
+   for(String y : x.split("8")){
       if(y.equals("9"))
          break;
-      else if(y.equals("8")){
+      else{
          r++;
          if(r > board.length){
             r = 0;
             c++;
          }
+         if(y.substring(0,1).equals("0")){
+            String left = "";
+            y = y.substring(1,y.length());
+         }
+         else{
+            String left = y.split("&")[1];
+            y = y.substring(1, y.indexOf("&"));
+            y = y.substring(y.indexOf("&") + 1, y.length()); 
+         }
+        if(y.substring(0,1).equals("0")){
+            String right = "";
+            y = y.substring(1,y.length());
+         }
+        else{
+            String right = y.split("&")[1];
+            y = y.substring(1, y.indexOf("&"));
+            y = y.substring(y.indexOf("&") + 1, y.length()); 
+         } 
+        type = Integer.parseInt(y.substring(0,1));
+        if(type == 1){
+         if(y.substring(0,1).equals("0"))
+            carW = false;
+         else
+            carW = true;
+         y = y.substring(1, y.length());
+         pass0 = (y.substring(0,1).equals("0")) ? false : true;
+         pass1 = (y.substring(1,2).equals("0")) ? false : true;
+         pass2 = (y.substring(2,3).equals("0")) ? false : true;
+         pass3 = (y.substring(3,4).equals("0")) ? false : true;        
+        }
+       }         
       }
-   }
    return;
   }
 }
