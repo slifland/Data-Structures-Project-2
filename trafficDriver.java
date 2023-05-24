@@ -201,4 +201,15 @@ public class trafficDriver
          }
       }
    }
+   
+   public static String codify(){
+      String code = "";
+      for(int i = 0; i < board.length; i++){
+         for(int k = 0; k < board[0].length; k++){
+            code += board[i][k].inCode();
+            code += "8";
+          }
+      }
+      return code;
+   }
 }

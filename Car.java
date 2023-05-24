@@ -50,6 +50,9 @@ public class Car{
    public boolean isAtIntersection() {
       return atIntersection;}
       
+   public String carInfo(){
+      return "";
+   }   
    //moves the car forward one space, returns true if successful
    public boolean move(){
       if(atStopSign)

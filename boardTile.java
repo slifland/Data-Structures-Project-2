@@ -156,5 +156,32 @@ public class boardTile{
       }
       counter++;
    }
+   
+   public String inCode(){
+      String code = "";
+      if(leftOccupant == null)
+         code += "0";
+      else
+         code = code + "&" + leftOccupant.carInfo() + "&";
+      if(rightOccupant == null)
+         code += "0";
+      else
+         code = code + "&" + rightOccupant.carInfo() + "&";
+      code += Integer.toString(type);
+      if(type == INTERSECTION){
+         if(hasCarWaiting)
+            code += "1";
+         else
+            code += "0";
+         for(int i = 0; i < 4; i++){
+            if(canPass[i])
+               code += "1";
+            else
+               code += "0";
+         }
+         code = code + "*" + Integer.toString(counter)  + "*"; 
+      }
+      return code;
+   }
 
 }
