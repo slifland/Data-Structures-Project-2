@@ -39,7 +39,6 @@ public class Car{
       loc = x;
       dir = d;
       atIntersection = y;
-      trafficDriver.carList.add(this);
    }
    
    public void exit() {atIntersection = false;}
