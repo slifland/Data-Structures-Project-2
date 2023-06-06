@@ -25,7 +25,7 @@ public class trafficGraphics  extends JPanel implements MouseListener, MouseMoti
    private static Timer t;							      //used to control what happens each frame (game code)
    private static HashSet<Integer> pressedKeys;    //collection of which keys are pressed down on the keyboard
    private static int playerX, playerY;             //position of a dot that can be moved around
-   private Button [] buttons = new Button[6]; 
+   private Button [] buttons = new Button[7]; 
    private int mouseX;
    private int mouseY;
 
@@ -44,6 +44,8 @@ public class trafficGraphics  extends JPanel implements MouseListener, MouseMoti
       buttons[4] = new Button(b5, "Increment", Color.black, Color.red, Color.white);
       Shape b6 = new Rectangle(785, 200, 75, 50);
       buttons[5] = new Button(b6, "Reverse", Color.black, Color.red, Color.white);
+      Shape b7 = new Rectangle(710, 250, 150, 50);
+      buttons[6] = new Button(b7, "Toggle Turn Saving", Color.black, Color.red, Color.white);
       addMouseListener( this );
       addMouseMotionListener( this );
       mouseX = SIZE/2;                       
@@ -143,6 +145,8 @@ public class trafficGraphics  extends JPanel implements MouseListener, MouseMoti
                   trafficDriver.resume();
                else if(b.getTitle().equals("Reverse"))
                   trafficDriver.reverse();
+               else if(b.getTitle().equals("Toggle Turn Saving"))
+                  trafficDriver.needCodify = !trafficDriver.needCodify;
             }
          }   
       //*****************/

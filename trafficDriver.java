@@ -21,10 +21,15 @@ public class trafficDriver
    public static boardTile[][] lastBoard;
    private static boolean inc;
    private static boolean go;
+   public static int turns;
+   private static boolean needRepaint = false;
+   private static Stack<String> past;
+   public static boolean needCodify = true;
    
    public static void main(String[]args) throws InterruptedException
    {
       carList = new ArrayList<Car>();
+      past = new Stack<String>();
       go = false;
       inc = false;
       intersectionList = new ArrayList<boardTile>();
@@ -39,7 +44,7 @@ public class trafficDriver
       frame.setVisible(true);
       int numWaiting;
       int numStationary;
-      int turns = 0;
+      turns = 0;
       int totCarsWaiting = 0;
       for(int i = 0; i < 100; i++){
          generateCar();
@@ -48,8 +53,11 @@ public class trafficDriver
          Thread.sleep(0);
       }
       while(true){
-         if(go){
-           // copyBoard();
+         if(go){   
+            if(needRepaint){
+               frame.repaint();
+               needRepaint = false;
+            } 
             if(carList.size() < 75){
                int toMake = 25;
                for(int i = 0; i < carList.size(); i++)
@@ -74,16 +82,21 @@ public class trafficDriver
                numWaiting += x.hasLine();
             }
             Thread.sleep(SPEED); //number of milliseconds between turns, 1 for essentially zero delay and 1000 for 1 second delay
-            frame.setTitle("Number of intersections with a line: " + numWaiting + ". Number of cars that are stationary: " + numStationary + ". Number of cars: " + carList.size() + ". Speed: " + SPEED);
-            if(turns > 50){
-               totCarsWaiting += numStationary;
-            }
+            frame.setTitle("Number of cars stationary: " + numStationary + ". Number of intersections with a line: " + numWaiting + ". Number of cars: " + carList.size() + ". Speed: " + SPEED);
             turns++;
             if(inc == true)
                go = false;
+            if(needCodify)
+               past.push(codify());
          }
-         else
+         else{
+            if(needRepaint){
+               frame.setTitle("Speed:" + SPEED);
+               frame.repaint();
+               needRepaint = false;
+            }
             Thread.sleep(0);
+         }
       }
    } 
    
@@ -178,44 +191,30 @@ public class trafficDriver
       carList.remove(c);
       return 1;
    }
-  //  public static void reverse(){
-//       for(int i = 0; i < board.length; i++){
-//          for(int k = 0; k < board[0].length; k++){
-//             board[i][k] = new boardTile(lastBoard[i][k]);
-//          }
-//       }
-//       carList = lastCarList;
-//       intersectionList = lastIntersectionList;
-//       go = false;
-//       inc = false;
-//    }
- //   public static void copyBoard(){
-//       lastIntersectionList.clear();
-//       lastCarList.clear();
-//       for(int i = 0; i < board.length; i++){
-//          for(int k = 0; k < board[0].length; k++){
-//             lastBoard[i][k] = new boardTile(board[i][k]);
-//          }
-//       }
-//    }
+   public static void reverse(){
+      String newBoard = past.pop();
+      decodify(newBoard); 
+      turns--;
+   }
    
    public static String codify(){
       String code = "";
       for(int i = 0; i < board.length; i++){
          for(int k = 0; k < board[0].length; k++){
             code += board[i][k].inCode();
-            code += "8";
+            code += "n";
          }
       }
       return code;
    }
    public static void decodify(String x){
-      lastBoard = new boardTile[SIZE/7][SIZE/7];
-      lastIntersectionList = new ArrayList<boardTile>();
-      lastCarList = new ArrayList<Car>();
-      lastCarList.clear();
-      int r = -1; //keep track of row (start at -1 since it increments at start of if)
-      int c = 0; //keep track of column
+      board = new boardTile[SIZE/7][SIZE/7];
+      System.out.println("::: " + carList.size());
+      carList.clear();
+      System.out.println("::: " + carList.size());
+      intersectionList.clear();
+      int r = 0; //keep track of row (start at -1 since it increments at start of if)
+      int c = -1; //keep track of column
       boolean carW;
       boolean pass0;
       boolean pass1;
@@ -225,34 +224,37 @@ public class trafficDriver
       int count;
       String left;
       String right;
-      for(String y : x.split("8")){
+      for(String y : x.split("n")){
          if(y.equals("9"))
             break;
          else{
-            r++;
-            if(r > board.length){
-               r = 0;
-               c++;
+            c++;
+            if(c >= board.length){
+               r++;
+               c=0;
             }
-            if(y.substring(0,1).equals("0")){
+            if(!y.substring(0,1).equals("1")){
                left = "";
                y = y.substring(1,y.length());
             }
             else{
+               y = y.substring(1, y.length());
                left = y.split("&")[1];
-               y = y.substring(1, y.indexOf("&"));
+               y = y.substring(1,y.length()); //cut out &
                y = y.substring(y.indexOf("&") + 1, y.length()); 
             }
-            if(y.substring(0,1).equals("0")){
+            if(!y.substring(0,1).equals("1")){
                right = "";
                y = y.substring(1,y.length());
             }
             else{
+               y = y.substring(1, y.length());
                right = y.split("&")[1];
-               y = y.substring(1, y.indexOf("&"));
+               y = y.substring(1,y.length());
                y = y.substring(y.indexOf("&") + 1, y.length()); 
             } 
             type = Integer.parseInt(y.substring(0,1));
+            y = y.substring(1,y.length());
             if(type == 1){
                if(y.substring(0,1).equals("0"))
                   carW = false;
@@ -263,15 +265,18 @@ public class trafficDriver
                pass1 = (y.substring(1,2).equals("0")) ? false : true;
                pass2 = (y.substring(2,3).equals("0")) ? false : true;
                pass3 = (y.substring(3,4).equals("0")) ? false : true;  
-               count = Integer.parseInt(y.substring(4,5)); 
-               lastBoard[r][c] = new boardTile(left, right, r, c, type, carW, count, pass0, pass1, pass2, pass3);
-               lastIntersectionList.add(lastBoard[r][c]);      
+               count = Integer.parseInt(y.substring(4,y.indexOf("*"))); 
+               board[r][c] = new boardTile(left, right, r, c, type, carW, count, pass0, pass1, pass2, pass3);
+               intersectionList.add(board[r][c]);      
             }
             else{
-               lastBoard[r][c] = new boardTile(left, right, r, c, type);
+               board[r][c] = new boardTile(left, right, r, c, type);
             }
          }         
       }
+      screen.updateBoard(board);
+      needRepaint = true;
+      System.out.println(carList.size());
       return;
    }
 }

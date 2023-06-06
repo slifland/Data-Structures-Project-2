@@ -61,14 +61,14 @@ public class boardTile{
       if(!c.leftIsEmpty())
          leftOccupant = new Car(c.getLeft(), this);
       if(!c.rightIsEmpty())
-      rightOccupant = new Car(c.getRight(), this);
+         rightOccupant = new Car(c.getRight(), this);
       if(type == INTERSECTION){
          canPass = new boolean[4];
          counter = c.getCounter();
          for(int i = 0; i < 4; i++)
             canPass[i] = c.getPass(i);
          hasCarWaiting = (c.hasLine() == 1) ? true : false;
-         trafficDriver.lastIntersectionList.add(this);
+         trafficDriver.intersectionList.add(this);
       }
    }
    
@@ -76,35 +76,71 @@ public class boardTile{
       type = t;
       row = r;
       col = c;
-      if(left.length() > 0)
-         leftOccupant = null; //place holder for constructing left occupant from code given
-      if(right.length() > 0)
-         rightOccupant = null; //place holder for constructing right occupant from code
-       hasCarWaiting = carW;
-       counter = count;
-       boolean[] canPass = new boolean[4];
-       canPass[0] = pass0;
-       canPass[1] = pass1;
-       canPass[2] = pass2;
-       canPass[3] = pass3;
+      boolean st;
+      if(left.length() > 0){
+//          if(left.substring(0,1).equals(0)){
+//             st = false;
+//          }
+//          else{
+//             st = true;
+//          }
+         leftOccupant = new Car(this, Integer.parseInt(left.substring(0,1)));
+      }
+      if(right.length() > 0){
+//          if(right.substring(0,1).equals(0)) {st = false;}
+//          else {st = true;}
+         rightOccupant = new Car(this, Integer.parseInt(right.substring(0,1)));
+      }
+      hasCarWaiting = carW;
+      counter = count;
+      canPass = new boolean[4];
+      canPass[0] = pass0;
+      canPass[1] = pass1;
+      canPass[2] = pass2;
+      canPass[3] = pass3;
    }
    public boardTile(String left, String right, int r, int c, int t){ //for reconstructing a non-intersection from code
       row = r;
       col = c;
-      if(left.length() > 0)
-         leftOccupant = null; //place holder for constructing left occupant from code given
-      if(right.length() > 0)
-         rightOccupant = null; //place holder for constructing right occupant from code
+      boolean st;
+      if(left.length() > 0){
+//          if(left.substring(0,1).equals(0)){
+//             st = false;
+//          }
+//          else{
+//             st = true;
+//          }
+         leftOccupant = new Car(this, Integer.parseInt(left.substring(0,1)));
+      }
+      if(right.length() > 0){
+//          if(right.substring(0,1).equals(0)){
+//             st = false;
+//          }
+//          else{
+//             st = true;
+//          }
+         rightOccupant = new Car(this, Integer.parseInt(right.substring(0,1)));
+      }
       type = t;   
    }
    //get methods
-   public int getCounter() {return counter;}
-   public int getType() {return type;}
-   public boolean getPass(int a) {try {return canPass[a]; } catch(NullPointerException e) { return false;}}
-   public Car getLeft() {return leftOccupant;}
-   public Car getRight() {return rightOccupant;}
-   public int getRow() {return row;}
-   public int getCol() {return col;}
+   public int getCounter() {
+      return counter;}
+   public int getType() {
+      return type;}
+   public boolean getPass(int a) {
+      try {
+         return canPass[a]; } 
+      catch(NullPointerException e) { 
+         return false;}}
+   public Car getLeft() {
+      return leftOccupant;}
+   public Car getRight() {
+      return rightOccupant;}
+   public int getRow() {
+      return row;}
+   public int getCol() {
+      return col;}
    public int hasLine(){
       if(hasCarWaiting)
          return 1;
@@ -115,12 +151,18 @@ public class boardTile{
    }
    
    //information methods
-   public boolean isEmpty() {return leftOccupant == null && rightOccupant == null;} //returns if the space is empty
-   public boolean rightIsEmpty() {return rightOccupant == null;}
-   public boolean leftIsEmpty() {return leftOccupant == null;}
-   public boolean isRoad() {return type == ROAD || type == STOP;} //checks if tile is a road
-   public boolean isStop() {return type == STOP;}
-   public boolean canGo() {return stopSign == null || stopSign.size() == 0;}
+   public boolean isEmpty() {
+      return leftOccupant == null && rightOccupant == null;} //returns if the space is empty
+   public boolean rightIsEmpty() {
+      return rightOccupant == null;}
+   public boolean leftIsEmpty() {
+      return leftOccupant == null;}
+   public boolean isRoad() {
+      return type == ROAD || type == STOP;} //checks if tile is a road
+   public boolean isStop() {
+      return type == STOP;}
+   public boolean canGo() {
+      return stopSign == null || stopSign.size() == 0;}
 
    //maintenance and set methods
    public void clear(){  //clears the tile
@@ -153,7 +195,7 @@ public class boardTile{
          canPass[i] = !canPass[i];
       }
       hasCarWaiting = false;
-    }
+   }
    public void enterLine(){
       hasCarWaiting = true;
    }
@@ -187,11 +229,11 @@ public class boardTile{
       if(leftOccupant == null)
          code += "0";
       else
-         code = code + "&" + leftOccupant.carInfo() + "&";
+         code = code + "1&" + leftOccupant.carInfo() + "&";
       if(rightOccupant == null)
          code += "0";
       else
-         code = code + "&" + rightOccupant.carInfo() + "&";
+         code = code + "1&" + rightOccupant.carInfo() + "&";
       code += Integer.toString(type);
       if(type == INTERSECTION){
          if(hasCarWaiting)
@@ -204,7 +246,7 @@ public class boardTile{
             else
                code += "0";
          }
-         code = code + "*" + Integer.toString(counter)  + "*"; 
+         code = code + Integer.toString(counter) + "*"; 
       }
       return code;
    }

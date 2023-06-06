@@ -35,10 +35,11 @@ public class Car{
       trafficDriver.lastCarList.add(this);
       atIntersection = c.isAtIntersection();
    }
-   public Car(boardTile x, int d, boolean y){ //for reconstructing from a code
+   public Car(boardTile x, int d){ //for reconstructing from a code
       loc = x;
       dir = d;
-      atIntersection = y;
+     // atStopSign = y;
+      trafficDriver.carList.add(this);
    }
    
    public void exit() {atIntersection = false;}
@@ -56,10 +57,10 @@ public class Car{
       
    public String carInfo(){
       String code = "";
-      if(atIntersection)
-         code += "1";
-      else
-         code += "0";
+//       if(atIntersection)
+//          code += "1";
+//       else
+//          code += "0";
       code += Integer.toString(dir);
       return code;
    }   
