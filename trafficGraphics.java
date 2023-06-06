@@ -28,6 +28,7 @@ public class trafficGraphics  extends JPanel implements MouseListener, MouseMoti
    private Button [] buttons = new Button[7]; 
    private int mouseX;
    private int mouseY;
+   private String ts = "Turn Saving: On";
 
     
    public trafficGraphics(boardTile[][] board){
@@ -45,7 +46,7 @@ public class trafficGraphics  extends JPanel implements MouseListener, MouseMoti
       Shape b6 = new Rectangle(785, 200, 75, 50);
       buttons[5] = new Button(b6, "Reverse", Color.black, Color.red, Color.white);
       Shape b7 = new Rectangle(710, 250, 150, 50);
-      buttons[6] = new Button(b7, "Toggle Turn Saving", Color.black, Color.red, Color.white);
+      buttons[6] = new Button(b7, ts, Color.black, Color.red, Color.white);
       addMouseListener( this );
       addMouseMotionListener( this );
       mouseX = SIZE/2;                       
@@ -145,8 +146,14 @@ public class trafficGraphics  extends JPanel implements MouseListener, MouseMoti
                   trafficDriver.resume();
                else if(b.getTitle().equals("Reverse"))
                   trafficDriver.reverse();
-               else if(b.getTitle().equals("Toggle Turn Saving"))
+               else if(b.getTitle().equals(ts)){
                   trafficDriver.needCodify = !trafficDriver.needCodify;
+                  if(ts.equals("Turn Saving: On"))
+                     ts = "Turn Saving: Off";
+                  else
+                     ts = "Turn Saving: On";
+                  buttons[6].setTitle(ts);
+               }
             }
          }   
       //*****************/
